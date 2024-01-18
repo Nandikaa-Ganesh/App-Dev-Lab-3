@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login/Sign Up</title>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&family=Newsreader:ital,opsz,wght@0,6..72,200;0,6..72,300;0,6..72,400;0,6..72,500;0,6..72,600;0,6..72,700;0,6..72,800;1,6..72,200;1,6..72,300;1,6..72,400;1,6..72,500;1,6..72,600;1,6..72,700;1,6..72,800&family=Unna:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Prata&display=swap" rel="stylesheet">
+ <link href="login.css" rel="stylesheet">
+</head>
+<body>
+  <header>Rent-A-Rooster🐓</header>
+
+<div class="container">
+  <div class="tabs">
+    <button class="tab active" onclick="showTab('login')">Login</button>
+    <button class="tab" onclick="showTab('signup')">Sign Up</button>
+  </div>
+
+  <div id="loginTab" class="form-group">
+    <!-- Login form inputs -->
+    <label for="loginUsername">Username:</label>
+    <input type="text" id="loginUsername" placeholder="Enter your username">
+
+    <label for="loginPassword">Password:</label>
+    <input type="password" id="loginPassword" placeholder="Enter your password">
+
+    <button onclick="login()">Login</button>
+  </div>
+
+  <div id="signupTab" class="form-group" style="display: none;">
+    <label for="signupName">Name:</label>
+    <input type="text" id="signupName" placeholder="Enter your name">
+
+    <label for="signupEmail">Email:</label>
+    <input type="email" id="signupEmail" placeholder="Enter your email">
+
+    <label for="signupPassword">Password:</label>
+    <input type="password" id="signupPassword" placeholder="Enter your password">
+
+    <label for="signupPhone">Phone Number:</label>
+    <input type="tel" id="signupPhone" placeholder="Enter your phone number">
+
+    <label for="signupLocation">Location - City and State:</label>
+    <input type="text" id="signupLocation" placeholder="Enter your location">
+
+    <label for="signupAge">Age:</label>
+    <input type="number" id="signupAge" placeholder="Enter your age">
+
+    <label for="signupGender">Gender:</label>
+    <select id="signupGender">
+      <option value="male">Male</option>
+      <option value="female">Female</option>
+      <option value="other">Other</option>
+    </select>
+
+    <button onclick="signup()">Sign Up</button>
+  </div>
+  <div id="notFoundCard" class="not-found-card">
+    <p>Username and password not found.</p>
+    <button onclick="hideNotFoundCard()">Back</button>
+  </div>
+</div>
+<script>
+    // Simulated user data stored in a CSV format
+    const userDataCSV = `JohnDoe,john@example.com,password123,1234567890,New York,NY,25,male
+  JaneSmith,jane@example.com,pass456,9876543210,San Francisco,CA,28,female`;
+  
+    function showTab(tabName) {
+      if (tabName === 'login') {
+        document.getElementById('loginTab').style.display = 'block';
+        document.getElementById('signupTab').style.display = 'none';
+        document.querySelector('.tab.login').classList.add('active');
+        document.querySelector('.tab.signup').classList.remove('active');
+      } else {
+        document.getElementById('loginTab').style.display = 'none';
+        document.getElementById('signupTab').style.display = 'block';
+        document.querySelector('.tab.login').classList.remove('active');
+        document.querySelector('.tab.signup').classList.add('active');
+      }
+    }
+  
+    function login() {
+  const username = document.getElementById('loginUsername').value;
+  const password = document.getElementById('loginPassword').value;
+
+  if (username && password) {
+    const userDataArray = userDataCSV.split('\n');
+    let found = false;
+
+    for (const userData of userDataArray) {
+      const [storedUsername, email, storedPassword] = userData.split(',');
+
+      if (username === storedUsername && password === storedPassword) {
+        found = true;
+        alert(`Login successful!\nUsername: ${username}`);
+        break;
+      }
+    }
+
+    if (!found) {
+      document.getElementById('notFoundCard').style.display = 'block';
+    }
+  } else {
+    alert('Please enter both username and password.');
+  }
+}
+
+function signup() {
+  const name = document.getElementById('signupName').value;
+  const emailInput = document.getElementById('signupEmail');
+  const email = emailInput.value;
+  const password = document.getElementById('signupPassword').value;
+  const phoneInput = document.getElementById('signupPhone');
+  const phone = phoneInput.value;
+  const location = document.getElementById('signupLocation').value;
+  const age = document.getElementById('signupAge').value;
+  const gender = document.getElementById('signupGender').value;
+
+  // Format-wise validation
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const phoneRegex = /^\d{10}$/;
+
+  // Clear existing error messages
+  clearErrorMessages();
+
+  if (!name) {
+    displayErrorMessage('Name is required.', 'signupName');
+  }
+
+  if (!email || !emailRegex.test(email)) {
+    displayErrorMessage('Invalid email format.', 'signupEmail');
+  }
+
+  if (!password) {
+    displayErrorMessage('Password is required.', 'signupPassword');
+  }
+
+  if (!phone || !phoneRegex.test(phone)) {
+    displayErrorMessage('Invalid phone number format (10 digits required).', 'signupPhone');
+  }
+
+  if (!location) {
+    displayErrorMessage('Location is required.', 'signupLocation');
+  }
+
+  if (!age) {
+    displayErrorMessage('Age is required.', 'signupAge');
+  }
+
+  if (!gender) {
+    displayErrorMessage('Gender is required.', 'signupGender');
+  }
+
+  // If there are no errors, proceed with signup
+  if (name && email && emailRegex.test(email) && password && phone && phoneRegex.test(phone) && location && age && gender) {
+    // Simulate storing data in a CSV file (for learning purposes)
+    const userData = `${name},${email},${password},${phone},${location},${age},${gender}\n`;
+
+    // Append the new user data to the existing CSV data
+    userDataCSV += userData;
+
+    alert('Sign Up successful!\nThe user data has been added to the CSV file.');
+  }
+}
+
+function displayErrorMessage(message, inputId) {
+  const errorElement = document.createElement('span');
+  errorElement.className = 'error-message';
+  errorElement.style.color = 'red';
+  errorElement.innerHTML = message;
+
+  const label = document.querySelector(`label[for="${inputId}"]`);
+  label.parentNode.insertBefore(errorElement, label.nextSibling);
+}
+
+function clearErrorMessages() {
+  const errorMessages = document.querySelectorAll('.error-message');
+  errorMessages.forEach(message => message.remove());
+}
+
+
+  
+    function hideNotFoundCard() {
+      document.getElementById('notFoundCard').style.display = 'none';
+    }
+  </script>
+
+</body>
+</html>
